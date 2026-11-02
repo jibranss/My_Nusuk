@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nusuk Portal - Digital Permit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans pb-12">
+
+  <header class="border-b border-amber-500/20 bg-slate-900/80 backdrop-blur sticky top-0 z-20">
+    <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 bg-emerald-600 rounded-xl flex items-center justify-center font-bold text-amber-300 shadow-lg shadow-emerald-900/40 border border-amber-400/30">
+          <i class="fa-solid fa-kaaba text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-bold text-white tracking-wide">NUSUK PORTAL</h1>
+          <p class="text-[10px] text-amber-400/80 uppercase tracking-widest font-medium">Digital Ziyarah & Permit</p>
+        </div>
+      </div>
+      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-mono">Verified</span>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto px-4 py-6 space-y-6">
+    <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl">
+      <h2 class="text-sm font-semibold text-amber-400 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-plus"></i> Terbitkan Izin Ziarah Baru
+      </h2>
+
+      <form id="permit-form" class="space-y-3">
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">LAYANAN ZIARAH</label>
+          <select id="permit-title" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+            <option value="Izin Masuk Raudhah (Pria)">Izin Masuk Raudhah (Pria)</option>
+            <option value="Izin Masuk Raudhah (Wanita)">Izin Masuk Raudhah (Wanita)</option>
+            <option value="Izin Thawaf Umrah">Izin Thawaf Umrah</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">TANGGAL</label>
+            <input type="date" id="permit-date" required class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1">SLOT WAKTU</label>
+            <select id="permit-slot" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+              <option value="08:00 - 08:30 WIB">08:00 - 08:30 WIB</option>
+              <option value="14:00 - 14:30 WIB">14:00 - 14:30 WIB</option>
+              <option value="20:00 - 20:30 WIB">20:00 - 20:30 WIB</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full mt-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-medium py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-passport"></i> Terbitkan Izin Digital
+        </button>
+      </form>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Izin Aktif Saya</h2>
+      <div id="permits-container" class="space-y-4"></div>
+    </section>
+  </main>
+
+  <script>
+    const API_URL = '/api/v1/permits';
+
+    async function loadPermits() {
+      try {
+        const res = await fetch(API_URL);
+        const result = await res.json();
+        if (result.success) renderPermits(result.data);
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+
+    function renderPermits(permits) {
+      const container = document.getElementById('permits-container');
+      container.innerHTML = '';
+
+      if (permits.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Belum ada izin aktif.</p>`;
+        return;
+      }
+
+      permits.forEach((p) => {
+        const qrId = `qr-${p.id}`;
+        const card = document.createElement('div');
+        card.className = "bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-emerald-500/30 rounded-2xl p-5 shadow-xl";
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <span class="text-[10px] font-mono text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-md">${p.id}</span>
+            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ${p.status === 'ACTIVE' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'}">
+              ${p.status}
+            </span>
+          </div>
+          <div class="py-4 flex items-center justify-between gap-4">
+            <div class="space-y-1">
+              <h3 class="text-sm font-bold text-white">${p.title}</h3>
+              <p class="text-xs text-slate-300"><i class="fa-regular fa-calendar text-emerald-400 mr-1"></i> ${p.scheduleDate}</p>
+              <p class="text-xs text-slate-300"><i class="fa-regular fa-clock text-amber-400 mr-1"></i> ${p.timeSlot}</p>
+            </div>
+            <div class="bg-white p-2 rounded-xl shadow-inner flex-shrink-0">
+              <div id="${qrId}"></div>
+            </div>
+          </div>
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+            <span>Scan di Pintu Gate</span>
+            <span class="text-emerald-400 font-mono"><i class="fa-solid fa-shield-halved"></i> Nusuk Verified</span>
+          </div>
+        `;
+
+        container.appendChild(card);
+
+        setTimeout(() => {
+          new QRCode(document.getElementById(qrId), {
+            text: p.qrToken,
+            width: 70,
+            height: 70,
+            colorDark: "#064e3b",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        }, 50);
+      });
+    }
+
+    document.getElementById('permit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        userId: 'USR-888',
+        title: document.getElementById('permit-title').value,
+        scheduleDate: document.getElementById('permit-date').value || '2026-11-15',
+        timeSlot: document.getElementById('permit-slot').value
+      };
+
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+      if (result.success) loadPermits();
+    });
+
+    loadPermits();
+  </script>
+</body>
+</html>

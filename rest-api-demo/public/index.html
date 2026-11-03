@@ -3,34 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nusuk Portal - Digital Permit</title>
+  <title>Nusuk Portal - Digital Permit & Auth</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans pb-12">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans pb-16">
 
-  <header class="border-b border-amber-500/20 bg-slate-900/80 backdrop-blur sticky top-0 z-20">
-    <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+  <!-- Header / Navbar -->
+  <header class="border-b border-amber-500/20 bg-slate-900/90 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-md mx-auto px-4 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="h-10 w-10 bg-emerald-600 rounded-xl flex items-center justify-center font-bold text-amber-300 shadow-lg shadow-emerald-900/40 border border-amber-400/30">
           <i class="fa-solid fa-kaaba text-lg"></i>
         </div>
         <div>
           <h1 class="text-base font-bold text-white tracking-wide">NUSUK PORTAL</h1>
-          <p class="text-[10px] text-amber-400/80 uppercase tracking-widest font-medium">Digital Ziyarah & Permit</p>
+          <p class="text-[10px] text-amber-400/80 uppercase tracking-widest font-medium">Digital Ziyarah & Authentication</p>
         </div>
       </div>
-      <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-full font-mono">Verified</span>
+      <div id="auth-header-action">
+        <!-- Button Login / Logout disisipkan via JS -->
+      </div>
     </div>
   </header>
 
-  <main class="max-w-md mx-auto px-4 py-6 space-y-6">
+  <main class="max-w-md mx-auto px-4 py-5 space-y-6">
+
+    <!-- Card Profil Jamaah (Jika Sudah Login) -->
+    <section id="user-profile-card" class="hidden bg-gradient-to-r from-slate-900 via-emerald-950/50 to-slate-900 border border-emerald-500/30 rounded-2xl p-4 shadow-xl relative overflow-hidden">
+      <div class="flex items-center gap-4">
+        <div class="h-12 w-12 rounded-full bg-emerald-600/30 border border-emerald-400 flex items-center justify-center text-emerald-400 font-bold text-lg">
+          <i class="fa-solid fa-user-check"></i>
+        </div>
+        <div class="space-y-0.5">
+          <h3 id="profile-name" class="text-sm font-bold text-white">---</h3>
+          <p id="profile-email" class="text-xs text-slate-400">---</p>
+          <div class="flex gap-2 pt-1 text-[10px] font-mono">
+            <span class="bg-amber-400/10 text-amber-400 px-2 py-0.5 rounded border border-amber-400/20" id="profile-passport">Passport: ---</span>
+            <span class="bg-emerald-400/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-400/20" id="profile-id">ID: ---</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Widget Jadwal Sholat -->
+    <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-mosque text-emerald-400 text-sm"></i>
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider">Jadwal Sholat Makkah</h2>
+        </div>
+        <span class="text-[10px] font-mono text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">Real-Time</span>
+      </div>
+      <div class="grid grid-cols-5 gap-1.5 text-center text-[11px]">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2"><p class="text-slate-400 text-[9px]">SUBUH</p><p id="time-subuh" class="font-mono font-bold text-emerald-400">--:--</p></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2"><p class="text-slate-400 text-[9px]">DZUHUR</p><p id="time-dzuhur" class="font-mono font-bold text-emerald-400">--:--</p></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2"><p class="text-slate-400 text-[9px]">ASHAR</p><p id="time-ashar" class="font-mono font-bold text-emerald-400">--:--</p></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2"><p class="text-slate-400 text-[9px]">MAGHRIB</p><p id="time-maghrib" class="font-mono font-bold text-emerald-400">--:--</p></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2"><p class="text-slate-400 text-[9px]">ISYA</p><p id="time-isya" class="font-mono font-bold text-emerald-400">--:--</p></div>
+      </div>
+    </section>
+
+    <!-- Form Pengajuan Izin Ziarah -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl">
       <h2 class="text-sm font-semibold text-amber-400 mb-4 flex items-center gap-2">
         <i class="fa-solid fa-calendar-plus"></i> Terbitkan Izin Ziarah Baru
       </h2>
-
       <form id="permit-form" class="space-y-3">
         <div>
           <label class="block text-[11px] text-slate-400 mb-1">LAYANAN ZIARAH</label>
@@ -56,51 +95,184 @@
           </div>
         </div>
 
-        <button type="submit" class="w-full mt-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-medium py-2.5 rounded-xl text-xs shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
+        <button type="submit" class="w-full mt-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
           <i class="fa-solid fa-passport"></i> Terbitkan Izin Digital
         </button>
       </form>
     </section>
 
+    <!-- Kartu Izin Digital -->
     <section class="space-y-3">
       <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Izin Aktif Saya</h2>
       <div id="permits-container" class="space-y-4"></div>
     </section>
   </main>
 
-  <script>
-    const API_URL = '/api/v1/permits';
+  <!-- Modal Auth (Login & Register) -->
+  <div id="auth-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative space-y-4">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      
+      <!-- Tab Switcher -->
+      <div class="flex border-b border-slate-800 text-xs font-semibold">
+        <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 pb-2 border-b-2 border-emerald-500 text-emerald-400">Login</button>
+        <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 pb-2 border-b-2 border-transparent text-slate-400">Register</button>
+      </div>
 
-    async function loadPermits() {
-      try {
-        const res = await fetch(API_URL);
-        const result = await res.json();
-        if (result.success) renderPermits(result.data);
-      } catch (err) {
-        console.error('Error:', err);
+      <!-- Form Login -->
+      <form id="login-form" class="space-y-3">
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">EMAIL</label>
+          <input type="email" id="login-email" required placeholder="jibran@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">PASSWORD</label>
+          <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl text-xs transition">Masuk Akun</button>
+      </form>
+
+      <!-- Form Register -->
+      <form id="register-form" class="hidden space-y-3">
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">NAMA LENGKAP</label>
+          <input type="text" id="reg-name" required placeholder="Muhammad Raja Jibran" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">EMAIL</label>
+          <input type="email" id="reg-email" required placeholder="jibran@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">PASSWORD</label>
+          <input type="password" id="reg-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">NOMOR PASPOR / NIK</label>
+          <input type="text" id="reg-passport" required placeholder="A12345678" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+        </div>
+        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-medium py-2 rounded-xl text-xs transition">Daftar Akun Baru</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = JSON.parse(localStorage.getItem('nusuk_user')) || null;
+
+    function updateUI() {
+      const authHeaderAction = document.getElementById('auth-header-action');
+      const profileCard = document.getElementById('user-profile-card');
+
+      if (currentUser) {
+        authHeaderAction.innerHTML = `
+          <button onclick="logout()" class="text-xs bg-rose-500/10 text-rose-400 border border-rose-500/30 px-3 py-1 rounded-full font-medium hover:bg-rose-500/20 transition">
+            <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+          </button>
+        `;
+        profileCard.classList.remove('hidden');
+        document.getElementById('profile-name').textContent = currentUser.fullName;
+        document.getElementById('profile-email').textContent = currentUser.email;
+        document.getElementById('profile-passport').textContent = `Passport: ${currentUser.passportNumber}`;
+        document.getElementById('profile-id').textContent = `ID: ${currentUser.id}`;
+      } else {
+        authHeaderAction.innerHTML = `
+          <button onclick="openAuthModal()" class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-3 py-1 rounded-full font-medium hover:bg-emerald-500/20 transition">
+            <i class="fa-solid fa-user-lock mr-1"></i> Login / Register
+          </button>
+        `;
+        profileCard.classList.add('hidden');
       }
+      loadPermits();
+    }
+
+    // Modal Handlers
+    function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+    function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+    function switchAuthTab(tab) {
+      if (tab === 'login') {
+        document.getElementById('login-form').classList.remove('hidden');
+        document.getElementById('register-form').classList.add('hidden');
+        document.getElementById('tab-login-btn').className = 'flex-1 pb-2 border-b-2 border-emerald-500 text-emerald-400';
+        document.getElementById('tab-register-btn').className = 'flex-1 pb-2 border-b-2 border-transparent text-slate-400';
+      } else {
+        document.getElementById('login-form').classList.add('hidden');
+        document.getElementById('register-form').classList.remove('hidden');
+        document.getElementById('tab-register-btn').className = 'flex-1 pb-2 border-b-2 border-emerald-500 text-emerald-400';
+        document.getElementById('tab-login-btn').className = 'flex-1 pb-2 border-b-2 border-transparent text-slate-400';
+      }
+    }
+
+    // Auth Actions
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('login-email').value,
+          password: document.getElementById('login-password').value
+        })
+      });
+      const result = await res.json();
+      if (result.success) {
+        currentUser = result.data;
+        localStorage.setItem('nusuk_user', JSON.stringify(currentUser));
+        closeAuthModal();
+        updateUI();
+      } else {
+        alert(result.message);
+      }
+    });
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const res = await fetch('/api/v1/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: document.getElementById('reg-name').value,
+          email: document.getElementById('reg-email').value,
+          password: document.getElementById('reg-password').value,
+          passportNumber: document.getElementById('reg-passport').value
+        })
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert(result.message);
+        switchAuthTab('login');
+      } else {
+        alert(result.message);
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('nusuk_user');
+      currentUser = null;
+      updateUI();
+    }
+
+    // Fetch Permits
+    async function loadPermits() {
+      const url = currentUser ? `/api/v1/permits?userId=${currentUser.id}` : '/api/v1/permits';
+      const res = await fetch(url);
+      const result = await res.json();
+      if (result.success) renderPermits(result.data);
     }
 
     function renderPermits(permits) {
       const container = document.getElementById('permits-container');
       container.innerHTML = '';
-
       if (permits.length === 0) {
         container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">Belum ada izin aktif.</p>`;
         return;
       }
-
       permits.forEach((p) => {
         const qrId = `qr-${p.id}`;
         const card = document.createElement('div');
         card.className = "bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-emerald-500/30 rounded-2xl p-5 shadow-xl";
-
         card.innerHTML = `
           <div class="flex items-center justify-between pb-3 border-b border-slate-800">
             <span class="text-[10px] font-mono text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded-md">${p.id}</span>
-            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ${p.status === 'ACTIVE' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'}">
-              ${p.status}
-            </span>
+            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ${p.status === 'ACTIVE' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-slate-700 text-slate-400'}">${p.status}</span>
           </div>
           <div class="py-4 flex items-center justify-between gap-4">
             <div class="space-y-1">
@@ -108,41 +280,26 @@
               <p class="text-xs text-slate-300"><i class="fa-regular fa-calendar text-emerald-400 mr-1"></i> ${p.scheduleDate}</p>
               <p class="text-xs text-slate-300"><i class="fa-regular fa-clock text-amber-400 mr-1"></i> ${p.timeSlot}</p>
             </div>
-            <div class="bg-white p-2 rounded-xl shadow-inner flex-shrink-0">
-              <div id="${qrId}"></div>
-            </div>
-          </div>
-          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-            <span>Scan di Pintu Gate</span>
-            <span class="text-emerald-400 font-mono"><i class="fa-solid fa-shield-halved"></i> Nusuk Verified</span>
+            <div class="bg-white p-2 rounded-xl shadow-inner flex-shrink-0"><div id="${qrId}"></div></div>
           </div>
         `;
-
         container.appendChild(card);
-
         setTimeout(() => {
-          new QRCode(document.getElementById(qrId), {
-            text: p.qrToken,
-            width: 70,
-            height: 70,
-            colorDark: "#064e3b",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-          });
+          new QRCode(document.getElementById(qrId), { text: p.qrToken, width: 70, height: 70, colorDark: "#064e3b", colorLight: "#ffffff" });
         }, 50);
       });
     }
 
+    // Submit Permit
     document.getElementById('permit-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const payload = {
-        userId: 'USR-888',
+        userId: currentUser ? currentUser.id : 'USR-888',
         title: document.getElementById('permit-title').value,
         scheduleDate: document.getElementById('permit-date').value || '2026-11-15',
         timeSlot: document.getElementById('permit-slot').value
       };
-
-      const res = await fetch(API_URL, {
+      const res = await fetch('/api/v1/permits', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -151,7 +308,21 @@
       if (result.success) loadPermits();
     });
 
-    loadPermits();
+    // Fetch Prayer Times
+    async function fetchPrayerTimes() {
+      const res = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Makkah&country=Saudi%20Arabia&method=4');
+      const data = await res.json();
+      if (data.code === 200) {
+        document.getElementById('time-subuh').textContent = data.data.timings.Fajr;
+        document.getElementById('time-dzuhur').textContent = data.data.timings.Dhuhr;
+        document.getElementById('time-ashar').textContent = data.data.timings.Asr;
+        document.getElementById('time-maghrib').textContent = data.data.timings.Maghrib;
+        document.getElementById('time-isya').textContent = data.data.timings.Isha;
+      }
+    }
+
+    fetchPrayerTimes();
+    updateUI();
   </script>
 </body>
 </html>
